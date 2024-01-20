@@ -11,6 +11,7 @@ install.packages("cowplot")
 library(cowplot)
 library(patchwork)
 library(openxlsx)
+library(openxlsx)
 Wave_7_Ecuador <- read_dta("BASES LIDE/WVS_Wave_7_Ecuador_Stata_v5.0.dta")
 Wave_6_Ecuador<- read_dta("BASES LIDE/WV6_Data_Ecuador_Stata_v20201117.dta")
 
@@ -437,7 +438,6 @@ cf_r_total <- wvs_cs %>%
           
 ####
 
-library(openxlsx)
 cf_selected <- cf_r_total %>%
   select(ano,region,mean_cf,mean_gob,mean_otra_reg,mean_police)
 print(cf_selected)
