@@ -10,6 +10,7 @@ library(here)
 install.packages("cowplot")
 library(cowplot)
 library(patchwork)
+library(openxlsx)
 Wave_7_Ecuador <- read_dta("BASES LIDE/WVS_Wave_7_Ecuador_Stata_v5.0.dta")
 Wave_6_Ecuador<- read_dta("BASES LIDE/WV6_Data_Ecuador_Stata_v20201117.dta")
 
@@ -33,6 +34,7 @@ Wave_6_Ecuador$V181 <- as_factor(Wave_6_Ecuador$V181)
 Wave_7_Ecuador$Q142 <- as_factor(Wave_7_Ecuador$Q142)
 Wave_6_Ecuador$V113 <- as_factor(Wave_6_Ecuador$V113)
 Wave_7_Ecuador$Q69 <- as_factor(Wave_7_Ecuador$Q69)
+
 wave7 <- Wave_7_Ecuador%>%
   select(cf= "Q58",
          "reg"= N_REGION_ISO,
@@ -144,6 +146,27 @@ wvs_c<- wvs_total%>%
                                "Oriente"=c("EC-S Morona Santiago","EC-N Napo","EC-D Orellana",
                                            "EC-Y Pastaza",
                                            "EC-U Sucumbios","EC-Z Zamora Chinchipe")))
+
+#Relaizamos una grupación de la varible de provicias sin todas las del oriente
+
+wvs_cs<- wvs_total%>%
+  filter(reg %in% c("EC-A Azuay","EC-B Bolivar","EC-F Canar",
+                    "EC-C Carchi","EC-X Cotopaxi","EC-H Chimborazo",
+                    "EC-L Loja","EC-I Imbabura","EC-P Pichincha",
+                    "EC-T Tungurahua","EC-O El Oro","EC-E Esmeraldas","EC-G Guayas",
+                    "EC-R Los Rios","EC-M Manabi","EC-SE Santa Elena",
+                    "EC-SD Santo Domingo de los Tsachilas",
+                    "EC-SD Santo Domingo de los Tsachilas"))%>%
+  mutate(region = fct_collapse(reg,
+                               "Sierra"=c("EC-A Azuay","EC-B Bolivar","EC-F Canar",
+                                          "EC-C Carchi","EC-X Cotopaxi","EC-H Chimborazo",
+                                          "EC-L Loja","EC-I Imbabura","EC-P Pichincha",
+                                          "EC-T Tungurahua"),
+                               "Costa"=c("EC-O El Oro","EC-E Esmeraldas","EC-G Guayas",
+                                         "EC-R Los Rios","EC-M Manabi","EC-SE Santa Elena",
+                                         "EC-SD Santo Domingo de los Tsachilas",
+                                         "EC-SD Santo Domingo de los Tsachilas")))
+
 
 #Calcular la media y error estandar por provincia 
 cf_p <- wvs_uio_gye %>% 
@@ -282,7 +305,7 @@ print(cf_r2_2018)
 ####################################################################################
 
 #Analizis de la variable de confianza sobre el gobierno
-cf_r_3 <- wvs_c %>% 
+cf_r_3 <- wvs_cs %>% 
   group_by(ano, region) %>% 
   summarize(mean = mean(as.numeric(confianza_gobieno_b), na.rm = TRUE), 
             se = sd(as.numeric(confianza_gobieno_b), na.rm = TRUE)/sqrt(n()))
@@ -338,7 +361,7 @@ print(combined_plot_3)
 
 #Analisis de la variable del miedo a perder el trabajo
 
-cf_r_4 <- wvs_c %>% 
+cf_r_4 <- wvs_cs %>% 
   group_by(ano, region) %>% 
   summarize(mean = mean(as.numeric(miedo_perder_empleo), na.rm = TRUE), 
             se = sd(as.numeric(miedo_perder_empleo), na.rm = TRUE)/sqrt(n()))
@@ -376,14 +399,32 @@ cf_r4_2018 <- cf_r_4 %>%
   scale_fill_manual(values = c("lightcoral", "lightblue","green")) 
 print(cf_r4_2018)
 
-############################################################################
+#Union de los dos gráficos
 
+combined_plot_4 <- cf_r4_2013 + cf_r4_2018 +
+  plot_layout(ncol = 2) +
+  plot_annotation(title = "Miedo de los ecuatorianos a perder su empleo",
+                  subtitle = "Expectativas sobre el mercado laboral",
+                  caption = "Las cifras representan en porcentaje la cantida de personas que tienen miedo a perder su trabajo.
+Las barras representan intervalos de confianza del 95%. Fuente:Encuesta Mundial de Valores (WVS) olas 2013 y 2018. 
+Elaborado por: Laboratorio de Investigación para el Desarrollo del Ecuador (LIDE)",
+                  theme = theme(
+                    plot.title = element_text(hjust = 0, color = "grey20", face = "bold", size = 14),
+                    plot.caption = element_text(hjust = 0, color = "grey30", face = 'italic')
+                  ))
+print(combined_plot_4)
+
+
+############################################################################
+# Estadistica comparativa de 
 cf_r_5 <- wvs_c %>% 
   group_by(ano, region) %>% 
   summarize(mean = mean(as.numeric(confianza_policia_b), na.rm = TRUE), 
             se = sd(as.numeric(confianza_policia_b), na.rm = TRUE)/sqrt(n()))
 
-cf_r_total <- wvs_c %>% 
+# Unir toda la estadistica comparativa para poder observar una tabla
+
+cf_r_total <- wvs_cs %>% 
   group_by(ano, region) %>% 
   summarize(mean_cf = mean(as.numeric(confianza_binaria), na.rm = TRUE), 
             se_cf = sd(as.numeric(confianza_binaria), na.rm = TRUE)/sqrt(n()),
@@ -395,10 +436,12 @@ cf_r_total <- wvs_c %>%
             se_police = sd(as.numeric(confianza_policia_b), na.rm = TRUE)/sqrt(n()))
           
 ####
-install.packages("openxlsx")
+
+library(openxlsx)
 cf_selected <- cf_r_total %>%
   select(ano,region,mean_cf,mean_gob,mean_otra_reg,mean_police)
 print(cf_selected)
-write.csv(cf_selected, "C:/Users/User/Git hub/Confianza/BASES LIDE/cf_selected_3.csv", row.names = FALSE,col.names = TRUE, sep = ";")
+write.xlsx(cf_selected, "BASES LIDE/cf_selected_4.xlsx")
+
 
 
