@@ -263,7 +263,7 @@ print(combined_plot)
 ################################################################################
 
 #Analisis de la variable de confianza en otras regiones 
-cf_r_2 <- wvs_c %>% 
+cf_r_2 <- wvs_cs %>% 
   group_by(ano, region) %>% 
   summarize(mean = mean(as.numeric(confianza_en_otra_reg_b), na.rm = TRUE), 
             se = sd(as.numeric(confianza_en_otra_reg_b), na.rm = TRUE)/sqrt(n()))
@@ -300,6 +300,21 @@ cf_r2_2018 <- cf_r_2 %>%
   scale_y_continuous(limits = c(0, 1.5)) +
   scale_fill_manual(values = c("lightcoral", "lightblue","green")) 
 print(cf_r2_2018)
+
+#Union de los dos gráficos
+
+combined_plot_2 <- cf_r2_2013 + cf_r2_2018 +
+  plot_layout(ncol = 2) +
+  plot_annotation(title = "Confianza en personas de otra region",
+                  subtitle = "cuantas personas confian en personas de otra region",
+                  caption = "Las cifras representan la cantidad de personas en porcentaje que no confian en personas de otra region.
+Las barras representan intervalos de confianza del 95%. Fuente:Encuesta Mundial de Valores (WVS) olas 2013 y 2018. 
+Elaborado por: Laboratorio de Investigación para el Desarrollo del Ecuador (LIDE)",
+                  theme = theme(
+                    plot.title = element_text(hjust = 0, color = "grey20", face = "bold", size = 14),
+                    plot.caption = element_text(hjust = 0, color = "grey30", face = 'italic')
+                  ))
+print(combined_plot_2)
 
 ####################################################################################
 
@@ -356,6 +371,15 @@ Elaborado por: Laboratorio de Investigación para el Desarrollo del Ecuador (LID
                     plot.caption = element_text(hjust = 0, color = "grey30", face = 'italic')
                   ))
 print(combined_plot_3)
+############################################################################3##
+combined_plot <- plot_grid(
+  combined_plot_2,
+  combined_plot_3,
+  labels = c("A", "B"),  # Agrega etiquetas A y B a los gráficos
+  ncol = 1  # Coloca los gráficos en una sola columna
+)
+print(combined_plot)
+
 ################################################################################
 
 #Analisis de la variable del miedo a perder el trabajo
@@ -380,7 +404,10 @@ cf_r4_2013 <- cf_r_4 %>%
             color = "grey20", size = 4, vjust = -2) +
   labs(title = "2013", x = "", y = "") + 
   scale_y_continuous(limits = c(0, 1.5)) +
-  scale_fill_manual(values = c("lightcoral", "lightblue","green")) 
+  scale_fill_manual(values = c("lightcoral", "lightblue","green"))+
+  theme_minimal()+
+  theme(panel.grid = element_blank(),
+        axis.line = element_line("black"))
 print(cf_r4_2013)
 
 # Gráfico 2018
@@ -395,27 +422,28 @@ cf_r4_2018 <- cf_r_4 %>%
             color = "grey20", size = 4, vjust = -2) +
   labs(title = "2018", x = "", y = "") + 
   scale_y_continuous(limits = c(0, 1.5)) +
-  scale_fill_manual(values = c("lightcoral", "lightblue","green")) 
+  scale_fill_manual(values = c("lightcoral", "lightblue","green"))+
+  theme_minimal()+
+  theme(panel.grid = element_blank(),
+        axis.line = element_line("black"))
 print(cf_r4_2018)
 
 #Union de los dos gráficos
-
 combined_plot_4 <- cf_r4_2013 + cf_r4_2018 +
   plot_layout(ncol = 2) +
   plot_annotation(title = "Miedo de los ecuatorianos a perder su empleo",
                   subtitle = "Expectativas sobre el mercado laboral",
                   caption = "Las cifras representan en porcentaje la cantida de personas que tienen miedo a perder su trabajo.
-Las barras representan intervalos de confianza del 95%. Fuente:Encuesta Mundial de Valores (WVS) olas 2013 y 2018. 
-Elaborado por: Laboratorio de Investigación para el Desarrollo del Ecuador (LIDE)",
+Las barras representan intervalos de confianza del 95%. Fuente:Encuesta Mundial de Valores (WVS) olas 2013 y 2018.",
                   theme = theme(
+                    panel.grid.major = element_blank(),
+                    panel.grid.minor = element_blank(),
                     plot.title = element_text(hjust = 0, color = "grey20", face = "bold", size = 14),
-                    plot.caption = element_text(hjust = 0, color = "grey30", face = 'italic')
-                  ))
+                    plot.caption = element_text(hjust = 0, color = "grey30", face = 'italic')))
 print(combined_plot_4)
 
-
 ############################################################################
-# Estadistica comparativa de 
+# Estadistica comparativa de confianza en la policia
 cf_r_5 <- wvs_c %>% 
   group_by(ano, region) %>% 
   summarize(mean = mean(as.numeric(confianza_policia_b), na.rm = TRUE), 
@@ -433,13 +461,41 @@ cf_r_total <- wvs_cs %>%
             se_gob = sd(as.numeric(confianza_gobieno_b), na.rm = TRUE)/sqrt(n()),
             mean_police = mean(as.numeric(confianza_policia_b), na.rm = TRUE), 
             se_police = sd(as.numeric(confianza_policia_b), na.rm = TRUE)/sqrt(n()))
-          
-####
 
-cf_selected <- cf_r_total %>%
-  select(ano,region,mean_cf,mean_gob,mean_otra_reg,mean_police)
-print(cf_selected)
-write.xlsx(cf_selected, "BASES LIDE/cf_selected_4.xlsx")
+#Gráfico de todas las vars
+############################################################################################
 
-
-
+cf_r_total %>% 
+  select(ano, region, mean_cf, mean_otra_reg, mean_gob, mean_police) %>%
+  pivot_longer(c(mean_cf, mean_otra_reg, mean_gob, mean_police),
+               names_to = 'confianza_from',
+               values_to = 'confianza') %>%
+  mutate(confianza_from = case_when(
+    confianza_from == 'mean_cf' ~ 'Confianza en la Familia',
+    confianza_from == 'mean_otra_reg' ~ 'Confianza en la otra Región',
+    confianza_from == 'mean_gob' ~ 'Confianza en el Gobierno',
+    confianza_from == 'mean_police' ~ 'Confianza en la Policía'
+  )) %>%
+  ggplot(aes(x = ano, y = confianza, fill = confianza_from)) +
+  geom_col(position = 'dodge') +
+  geom_text(aes(label = scales::percent(confianza, accuracy = 1), group = confianza_from),
+            position = position_dodge(width = 4.2),  
+            vjust = -0.5, 
+            size = 3) +  
+  scale_x_continuous(breaks = c(2013, 2018)) +
+  scale_fill_manual(values = c('#20409A', '#EE2E24', '#3EA055', '#F7D002')) +
+  facet_wrap(~region) +
+  labs(title = 'Niveles de Confianza por Año y Región',
+       subtitle = 'Datos de Confianza 2013-2018',
+       x = 'Año',
+       y = 'Nivel de Confianza',
+       fill = '',
+       caption = 'Las cifras representan en porcentaje la confianza que tienen las personas en los diferentes indicadores.\nLas barras representan intervalos de confianza del 95%. Fuente: Encuesta Mundial de Valores (WVS) olas 2013 y 2018.') +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.7, hjust = 1),
+        legend.position = 'bottom',  
+        legend.box = 'horizontal',
+        plot.caption = element_text(hjust = 0), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line("black"))  
