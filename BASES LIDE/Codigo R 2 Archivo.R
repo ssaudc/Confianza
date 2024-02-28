@@ -466,6 +466,74 @@ cf_r_total <- wvs_cs %>%
 ############################################################################################
 
 cf_r_total %>% 
+  select(ano, region, mean_cf, mean_otra_reg, mean_gob, mean_police,se_cf,se_otra_reg,se_gob,
+         se_police) %>%
+  pivot_longer(c(mean_cf, mean_otra_reg, mean_gob, mean_police),
+               names_to = 'confianza_from',
+               values_to = 'confianza') %>%
+  mutate(confianza_from = case_when(
+    confianza_from == 'mean_cf' ~ 'Confianza en la Familia',
+    confianza_from == 'mean_otra_reg' ~ 'Confianza en la otra Región',
+    confianza_from == 'mean_gob' ~ 'Confianza en el Gobierno',
+    confianza_from == 'mean_police' ~ 'Confianza en la Policía'
+  )) %>%
+  ggplot(aes(x = factor(region), y = confianza, fill = confianza_from)) +
+  geom_col(position = position_dodge(width = 2), width = 2) +
+  geom_errorbar(aes(ymin=confianza- 1.96 * se_cf, ymax = confianza + 1.96 * se_cf),
+                position = position_dodge(width = 2),
+                width = 1.5) +
+  geom_text(aes(label = scales::percent(confianza, accuracy = 1), group = confianza_from),
+            position = position_dodge(width = 4.2),  
+            vjust = -1, 
+            size = 3) +  
+  scale_x_discrete(labels=c("Sierra","Costa")) +
+  scale_fill_manual(values = c('#20409A', '#EE2E24', '#3EA055', '#F7D002')) +
+  scale_y_continuous(labels = scales::percent_format(acurracy=1))+
+  facet_wrap(~ano,ncol=2) +
+  labs(title = 'Porcentaje de Confianza por Año y Región',
+       subtitle = 'Datos de Confianza 2013-2018',
+       x = 'Región',
+       y = 'Porcentaje de Confianza',
+       fill = '',
+       caption = 'Las cifras representan en porcentaje la confianza que tienen las personas en los diferentes indicadores.\nLas barras representan intervalos de confianza del 95%. Fuente: Encuesta Mundial de Valores (WVS) olas 2013 y 2018.') +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.7, hjust = 1),
+        legend.position = 'bottom',  
+        legend.box = 'horizontal',
+        plot.caption = element_text(hjust = 0), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line("black"))  
+
+
+#Gráfico de confianza con porcentajes nacionales 
+
+wvs_n<- wvs_total%>%
+  mutate(region = fct_collapse(reg,
+                               "Ecuador"=c("EC-A Azuay","EC-B Bolivar","EC-F Canar",
+                                          "EC-C Carchi","EC-X Cotopaxi","EC-H Chimborazo",
+                                          "EC-L Loja","EC-I Imbabura","EC-P Pichincha",
+                                          "EC-T Tungurahua","EC-O El Oro","EC-E Esmeraldas","EC-G Guayas",
+                                         "EC-R Los Rios","EC-M Manabi","EC-SE Santa Elena",
+                                         "EC-SD Santo Domingo de los Tsachilas",
+                                         "EC-SD Santo Domingo de los Tsachilas","EC-S Morona Santiago",
+                                          "EC-N Napo","EC-D Orellana","EC-Y Pastaza",
+                                           "EC-U Sucumbios","EC-Z Zamora Chinchipe")))
+
+#Unir toda la estadistica comparativa para poder observar una tabla
+c_nacional <- wvs_n %>% 
+  group_by(ano, region) %>% 
+  summarize(mean_cf = mean(as.numeric(confianza_binaria), na.rm = TRUE), 
+            se_cf = sd(as.numeric(confianza_binaria), na.rm = TRUE)/sqrt(n()),
+            mean_otra_reg = mean(as.numeric(confianza_en_otra_reg_b), na.rm = TRUE), 
+            se_otra_reg = sd(as.numeric(confianza_en_otra_reg_b), na.rm = TRUE)/sqrt(n()),
+            mean_gob = mean(as.numeric(confianza_gobieno_b), na.rm = TRUE), 
+            se_gob = sd(as.numeric(confianza_gobieno_b), na.rm = TRUE)/sqrt(n()),
+            mean_police = mean(as.numeric(confianza_policia_b), na.rm = TRUE), 
+            se_police = sd(as.numeric(confianza_policia_b), na.rm = TRUE)/sqrt(n()))
+
+#Gráfico de porcentajes nacionales 
+c_nacional %>% 
   select(ano, region, mean_cf, mean_otra_reg, mean_gob, mean_police) %>%
   pivot_longer(c(mean_cf, mean_otra_reg, mean_gob, mean_police),
                names_to = 'confianza_from',
@@ -485,10 +553,10 @@ cf_r_total %>%
   scale_x_continuous(breaks = c(2013, 2018)) +
   scale_fill_manual(values = c('#20409A', '#EE2E24', '#3EA055', '#F7D002')) +
   facet_wrap(~region) +
-  labs(title = 'Niveles de Confianza por Año y Región',
+  labs(title = 'Porcenjate de Confianza en Ecuador por Año',
        subtitle = 'Datos de Confianza 2013-2018',
        x = 'Año',
-       y = 'Nivel de Confianza',
+       y = 'Porcentaje de Confianza',
        fill = '',
        caption = 'Las cifras representan en porcentaje la confianza que tienen las personas en los diferentes indicadores.\nLas barras representan intervalos de confianza del 95%. Fuente: Encuesta Mundial de Valores (WVS) olas 2013 y 2018.') +
   theme_minimal() +
@@ -498,4 +566,4 @@ cf_r_total %>%
         plot.caption = element_text(hjust = 0), 
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        axis.line = element_line("black"))  
+        axis.line = element_line("black")) 
