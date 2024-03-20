@@ -10,8 +10,10 @@ library(here)
 library(cowplot)
 library(patchwork)
 library(openxlsx)
+library(foreign)
 Wave_7_Ecuador <- read_dta("BASES LIDE/WVS_Wave_7_Ecuador_Stata_v5.0.dta")
 Wave_6_Ecuador<- read_dta("BASES LIDE/WV6_Data_Ecuador_Stata_v20201117.dta")
+
 
 # Union de bases de datos
 
@@ -567,3 +569,57 @@ c_nacional %>%
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.line = element_line("black")) 
+
+################################################################################
+#Bases de d
+sri_cierres_2017<- read_dta("BASES LIDE/sri_cierres_2017.dta")
+sri_cierres_2018<- read_dta("BASES LIDE/sri_cierres_2018.dta")
+
+#############################################################################
+#2017
+cierres_sri<-sri_cierres_2017 %>%
+  select(provincia="descripcion_provincia",
+         numero_de_cierres="total")
+
+cierres_sri_p <- cierres_sri %>%
+  mutate(provincia = fct_collapse(provincia,
+                                  "Sierra" = c("AZUAY", "BOLIVAR", "CANAR",
+                                               "CARCHI", "COTOPAXI", "CHIMBORAZO",
+                                               "LOJA", "IMBABURA", "PICHINCHA",
+                                               "TUNGURAHUA"),
+                                  "Costa" = c("EL ORO", "ESMERALDAS", "GUAYAS",
+                                              "LOS RIOS", "MANABI", "SANTA ELENA",
+                                              "SANTO DOMINGO DE LOS TSACHILAS"),
+                                  "Oriente" = c("MORONA SANTIAGO", "NAPO", "ORELLANA",
+                                                "PASTAZA", "SUCUMBIOS", "ZAMORA CHINCHIPE")))
+
+sum_cierres <- cierres_sri_p %>%
+  group_by(provincia) %>%
+  summarise(total_cierres = sum(numero_de_cierres))
+
+print(sum_cierres)
+
+
+#2018
+cierres_sri_2018<-sri_cierres_2018 %>%
+  select(provincia="descripcion_provincia",
+         numero_de_cierres="total")
+
+cierres_sri_p_2018 <- cierres_sri_2018 %>%
+  mutate(provincia = fct_collapse(provincia,
+                                  "Sierra" = c("AZUAY", "BOLIVAR", "CANAR",
+                                               "CARCHI", "COTOPAXI", "CHIMBORAZO",
+                                               "LOJA", "IMBABURA", "PICHINCHA",
+                                               "TUNGURAHUA"),
+                                  "Costa" = c("EL ORO", "ESMERALDAS", "GUAYAS",
+                                              "LOS RIOS", "MANABI", "SANTA ELENA",
+                                              "SANTO DOMINGO DE LOS TSACHILAS"),
+                                  "Oriente" = c("MORONA SANTIAGO", "NAPO", "ORELLANA",
+                                                "PASTAZA", "SUCUMBIOS", "ZAMORA CHINCHIPE")))
+
+sum_cierres_2018 <- cierres_sri_p_2018 %>%
+  group_by(provincia) %>%
+  summarise(total_cierres = sum(numero_de_cierres))
+print(sum_cierres_2018)
+
+
