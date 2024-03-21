@@ -119,6 +119,10 @@ wvs_total$confianza_policia <- ifelse(wvs_total$c_policia %in% c("Quite a lot", 
 wvs_total <- wvs_total %>%
   mutate(confianza_policia_b = as.integer(c_policia %in% c("Quite a lot", "A great deal")))
 
+
+
+
+
 #filtrando por Provincia y renombre de variables
 
 wvs_uio_gye <- wvs_total%>%
@@ -210,7 +214,6 @@ cf_p_2018 <- cf_p %>%
   labs(title = "2018", x = "", y = "") + 
   scale_y_continuous(limits = c(0, 1.5))
 print(cf_p_2018)
-
 ################################################################################
 #analizis de variable de confianza en la familia
 
@@ -464,115 +467,46 @@ cf_r_total <- wvs_cs %>%
 #Gráfico de todas las vars
 ############################################################################################
 
-# Preparar base de datos para gráficos
-
-# Este código prepara de forma incorrecta los datos
-
-# df_graficos <-
-#   cf_r_total %>%
-#   select(ano, region, mean_cf, mean_otra_reg, mean_gob, mean_police, se_cf,se_otra_reg,se_gob,se_police) %>%
-#   pivot_longer(c(mean_cf, mean_otra_reg, mean_gob, mean_police),
-#                names_to = 'confianza_from',
-#                values_to = 'confianza') %>%
-#     mutate(confianza_from = case_when(confianza_from == 'mean_cf' ~ 'Confianza en la Familia',
-#                                       confianza_from == 'mean_otra_reg' ~ 'Confianza en la otra Región',
-#                                       confianza_from == 'mean_gob' ~ 'Confianza en el Gobierno',
-#                                       confianza_from == 'mean_police' ~ 'Confianza en la Policía'),
-#             ano = zap_labels(ano))
-
-df_graficos <-
-  cf_r_total %>% 
-  select(ano,
-         region, 
-         starts_with(c("mean", "se"))) %>% 
-  rename(mean_otrareg = mean_otra_reg,
-         se_otrareg = se_otra_reg) %>% 
-  pivot_longer(cols = -c(ano,region),
-               names_to = c("indicador", "variable"),
-               names_sep = "_",
-               values_to = "valor") %>% 
-  pivot_wider(names_from = "indicador",
-              values_from = "valor") %>% 
-  mutate(ano = zap_labels(ano),
-         confianza_from = case_when(variable == 'cf' ~ 'Confianza en la Familia',
-                                    variable == 'otrareg' ~ 'Confianza en la otra Región',
-                                    variable == 'gob' ~ 'Confianza en el Gobierno',
-                                    variable == 'police' ~ 'Confianza en la Policía')
-  )
-
-
-caption_confianza_grafico_conjunto <- 
-  "Las cifras representan en porcentaje la confianza que tienen las personas en los diferentes indicadores.\nLas barras representan intervalos de confianza del 95%. Fuente: Encuesta Mundial de Valores (WVS) olas 2013 y 2018."
-
-# Ahora si, el gráfico: 
-
-grafico_2013_por_region <-
-  df_graficos %>%
-  filter(ano == 2013) %>% 
-  ggplot(aes(x = variable, y = mean, fill = confianza_from)) +
-  geom_col(position = position_dodge(), color = "black") +
-  facet_wrap(~ region) +
-  geom_errorbar(aes(ymin = mean - 1.96 * se, 
-                    ymax = mean + 1.96 * se),
-                position = position_dodge()) +
-  geom_text(aes(label = scales::percent(mean, accuracy = 1), group = confianza_from),
-            position = position_dodge(width = 1), 
-            vjust = 5, 
+cf_r_total %>% 
+  select(ano, region, mean_cf, mean_otra_reg, mean_gob, mean_police,se_cf,se_otra_reg,se_gob,
+         se_police) %>%
+  pivot_longer(c(mean_cf, mean_otra_reg, mean_gob, mean_police),
+               names_to = 'confianza_from',
+               values_to = 'confianza') %>%
+  mutate(confianza_from = case_when(
+    confianza_from == 'mean_cf' ~ 'Confianza en la Familia',
+    confianza_from == 'mean_otra_reg' ~ 'Confianza en la otra Región',
+    confianza_from == 'mean_gob' ~ 'Confianza en el Gobierno',
+    confianza_from == 'mean_police' ~ 'Confianza en la Policía'
+  )) %>%
+  ggplot(aes(x = factor(region), y = confianza, fill = confianza_from)) +
+  geom_col(position = position_dodge(width = 2), width = 2) +
+  geom_errorbar(aes(ymin=confianza- 1.96 * se_cf, ymax = confianza + 1.96 * se_cf),
+                position = position_dodge(width = 2),
+                width = 1.5) +
+  geom_text(aes(label = scales::percent(confianza, accuracy = 1), group = confianza_from),
+            position = position_dodge(width = 4.2),  
+            vjust = -1, 
             size = 3) +  
+  scale_x_discrete(labels=c("Sierra","Costa")) +
   scale_fill_manual(values = c('#20409A', '#EE2E24', '#3EA055', '#F7D002')) +
-  scale_y_continuous(labels = scales::percent_format(acurracy=1)) +
-  labs(title = '2013',
-       x = "",
-       y = "Porcentaje de personajes que denotan confianza (%)",
-       fill = "") + 
+  scale_y_continuous(labels = scales::percent_format(acurracy=1))+
+  facet_wrap(~ano,ncol=2) +
+  labs(title = 'Porcentaje de Confianza por Año y Región',
+       subtitle = 'Datos de Confianza 2013-2018',
+       x = 'Región',
+       y = 'Porcentaje de Confianza',
+       fill = '',
+       caption = 'Las cifras representan en porcentaje la confianza que tienen las personas en los diferentes indicadores.\nLas barras representan intervalos de confianza del 95%. Fuente: Encuesta Mundial de Valores (WVS) olas 2013 y 2018.') +
   theme_minimal() +
-  theme(axis.text.x = element_blank(),
-        legend.position = "none",
-        plot.background = element_rect(fill = "white", color = NA),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.5, linetype = "solid"),
-        plot.caption = element_text(hjust = 0),
-        panel.grid = element_blank(),
-        strip.background = element_rect(fill = "grey90", colour = "black", linewidth = 0.5))
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.7, hjust = 1),
+        legend.position = 'bottom',  
+        legend.box = 'horizontal',
+        plot.caption = element_text(hjust = 0), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line("black"))  
 
-grafico_2018_por_region <-
-  df_graficos %>% 
-  filter(ano == 2018) %>% 
-  ggplot(aes(x = variable, y = mean, fill = confianza_from)) +
-  geom_col(position = position_dodge(), color = "black") +
-  facet_wrap(~ region) +
-  geom_errorbar(aes(ymin = mean - 1.96 * se, 
-                    ymax = mean + 1.96 * se),
-                position = position_dodge()) +
-  geom_text(aes(label = scales::percent(mean, accuracy = 1), group = confianza_from),
-            position = position_dodge(width = 1), 
-            vjust = 5, 
-            size = 3) +  
-  scale_fill_manual(values = c('#20409A', '#EE2E24', '#3EA055', '#F7D002')) +
-  scale_y_continuous(labels = scales::percent_format(acurracy=1)) +
-  labs(title = '2018',
-       x = "",
-       y = "",
-       fill = "") + 
-  theme_minimal() +
-  theme(axis.text.x = element_blank(),
-        legend.position = "none",
-        plot.background = element_rect(fill = "white", color = NA),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.5, linetype = "solid"),
-        plot.caption = element_text(hjust = 0),
-        panel.grid = element_blank(),
-        strip.background = element_rect(fill = "grey90", colour = "black", linewidth = 0.5))
-
-# Usar patchwork para juntar ambos gráficos y poner un título general, leyenda y caption
-
-grafico_confianza_por_region <- 
-  grafico_2013_por_region + 
-  grafico_2018_por_region +
-  plot_layout(ncol = 2, guides = "collect") +
-  plot_annotation(title = "Confianza en diferentes indicadores por región",
-                  caption = caption_confianza_grafico_conjunto) & theme(legend.position = "bottom") +
-  theme(plot.caption = element_text(hjust = 0))
-
-ggsave(grafico_confianza_por_region, filename = "figures/grafico_confianza_por_region.png", width = 20, height = 10, units = "cm")
 
 #Gráfico de confianza con porcentajes nacionales 
 
@@ -601,7 +535,6 @@ c_nacional <- wvs_n %>%
             se_police = sd(as.numeric(confianza_policia_b), na.rm = TRUE)/sqrt(n()))
 
 #Gráfico de porcentajes nacionales 
-
 c_nacional %>% 
   select(ano, region, mean_cf, mean_otra_reg, mean_gob, mean_police) %>%
   pivot_longer(c(mean_cf, mean_otra_reg, mean_gob, mean_police),
