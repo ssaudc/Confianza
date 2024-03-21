@@ -467,7 +467,7 @@ cf_r_total <- wvs_cs %>%
 # Este código prepara de forma incorrecta los datos
 
 # df_graficos <-
-#   cf_r_total %>% 
+#   cf_r_total %>%
 #   select(ano, region, mean_cf, mean_otra_reg, mean_gob, mean_police, se_cf,se_otra_reg,se_gob,se_police) %>%
 #   pivot_longer(c(mean_cf, mean_otra_reg, mean_gob, mean_police),
 #                names_to = 'confianza_from',
@@ -562,14 +562,15 @@ grafico_2018_por_region <-
 
 # Usar patchwork para juntar ambos gráficos y poner un título general, leyenda y caption
 
-#grafico_confianza_por_region <- 
+grafico_confianza_por_region <- 
   grafico_2013_por_region + 
   grafico_2018_por_region +
   plot_layout(ncol = 2, guides = "collect") +
   plot_annotation(title = "Confianza en diferentes indicadores por región",
                   caption = caption_confianza_grafico_conjunto) & theme(legend.position = "bottom") +
   theme(plot.caption = element_text(hjust = 0))
-  #plot_annotation(caption = caption_confianza_grafico_conjunto)
+
+ggsave(grafico_confianza_por_region, filename = "figures/grafico_confianza_por_region.png", width = 20, height = 10, units = "cm")
 
 #Gráfico de confianza con porcentajes nacionales 
 
