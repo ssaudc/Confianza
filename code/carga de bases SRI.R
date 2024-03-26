@@ -32,4 +32,4 @@ mapply(download.file, url, dir)
 
 sri_2018 <- read_delim("data/sri/sri_cierres_2018.csv",
                        delim = ";",
-                       locale = locale(encoding = "UTF-8"))
+                       locale = locale(encoding = "ISO-8859-1"))
