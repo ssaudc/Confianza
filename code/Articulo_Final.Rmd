@@ -11,7 +11,7 @@ csl: style.csl
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE) 
 ```
 
 El nivel de confianza que existe dentro de una sociedad funciona como un indicador de cómo se desarrollará la misma (Keefer & Scartascini, 2022). Las consecuencias económicas y políticas de un bajo nivel de confianza se reflejan en múltiples niveles sociales, reduciendo el crecimiento económico y la innovación. Por otro lado, un nivel alto de confianza da como resultado un mejor funcionamiento de la sociedad, donde los trabajadores, empleadores, bancos, empresas y gobierno confían el uno en el otro con el fin de generar crecimiento económico. 
