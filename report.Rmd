@@ -1,36 +1,22 @@
 ---
 title: "¿Qué implica la confianza para el desarrollo económico del Ecuador?"
 author: "Sami Saud"
-<<<<<<< HEAD
 date: "2024-04-29"
-=======
-date: "2024-04-30"
->>>>>>> ea82c88496162922ca9a0e35835849fdd6674f13
 output: 
-html_document: default
-word_document: default
-pdf_document: default
-bibliography: LIDE.bib
+  html_document: default
+bibliography: referencias_articulo_confianza.bib
 csl: style.csl
 ---
 
 ```{r setup, include=FALSE}
-<<<<<<< HEAD
-knitr::opts_chunk$set(echo = TRUE) 
-=======
-knitr::opts_chunk$set(echo = TRUE)
->>>>>>> ea82c88496162922ca9a0e35835849fdd6674f13
+knitr::opts_chunk$set(echo = F) 
 ```
 
 El nivel de confianza que existe dentro de una sociedad funciona como un indicador de cómo se desarrollará la misma (Keefer & Scartascini, 2022). Las consecuencias económicas y políticas de un bajo nivel de confianza se reflejan en múltiples niveles sociales, reduciendo el crecimiento económico y la innovación. Por otro lado, un nivel alto de confianza da como resultado un mejor funcionamiento de la sociedad, donde los trabajadores, empleadores, bancos, empresas y gobierno confían el uno en el otro con el fin de generar crecimiento económico. 
 
 Se identifican tres vías específicas a partir de las cuales el nivel de confianza puede distorsionar las actividades económicas. La primera es entre el gobierno y las empresas. Los gobiernos promueven la actividad económica a través de conjuntos de políticas regulatorias y fiscales; si existe desconfianza, las empresas serán menos propensas a aprovechar esas condiciones favorables, puesto que desconfían de las políticas del gobierno. La segunda vía es la confianza interpersonal de los ciudadanos, que afecta particularmente a las regulaciones públicas hacia las empresas. Si los individuos no confían en las empresas, estos buscarán que exista un mayor número de regulaciones hacia las mismas, lo que crea cargas adicionales para las mismas. La última vía es la desconfianza interpersonal, a la manera en que las empresas interactúan internamente y hacen negocios unas con otras. Esto quiere decir que la desconfianza interpersonal disuade a las empresas a contratar o delegar responsabilidad a los mejores trabajadores, lo cual provoca que las mismas no sean eficientes o demoren más al momento de tomar una decisión.  En este artículo, estudiamos la confianza de forma cuantitativa, utilizando los indicadores recogidos por la Encuesta Mundial de Valores (WVS). Esta encuesta se realiza en diversos países del mundo, incluyendo al Ecuador en 2013 y 2018. 
 
-<<<<<<< HEAD
 # ¿Quién confía más, Sierra o Costa?   
-=======
-#¿Quién confía más, Sierra o Costa?   
->>>>>>> ea82c88496162922ca9a0e35835849fdd6674f13
 
 ```{r}
 knitr::include_graphics('figures/grafico_confianza_por_region.png')
@@ -43,11 +29,7 @@ Como se puede observar, en la región Costa, el porcentaje de personas que conf�
 
 El cambio en el tiempo de los indicadores de confianza es obvio, para ambas regiones del país. Todos los indicadores demuestran un claro deterioro, mostrando el incremento de la desconfianza en nuestro país. Es imperativo observar los indicadores en agregado, e investigar su evolución y los posibles factores de influencia. 
 
-<<<<<<< HEAD
 # La reducción de la confianza en el Ecuador en el tiempo
-=======
-#La reducción de la confianza en el Ecuador en el tiempo
->>>>>>> ea82c88496162922ca9a0e35835849fdd6674f13
 
 ```{r}
 knitr::include_graphics('figures/grafico_confianza_nacional.png')
@@ -57,17 +39,13 @@ Como se ha mencionado anteriormente, el deterioro de la confianza a nivel region
 
 ¿Qué cambió entre 2013 y 2018? El más obvio factor sería el económico. La situación económica actual del Ecuador es alarmante. Esta puede verse reflejada en el constante aumento del desempleo y subempleo, así como en la reducción de la inversión extranjera directa. En el año 2013, esta fue de 727 millones de dólares, representando un 0.8% del PIB del Ecuador; sin embargo, esta se redujo en un 13% para el año 2018 (BCE, 2019). A su vez, si comparamos el PIB del Ecuador del último trimestre de 2017 con el del último trimestre de 2018, podemos ver que este apenas aumentó en 0.8%.(BCE,2019).
 
-Uno de los indicadores claves que establece el Banco Interamericano de Desarrollo (BID) para explicar esta situación es la confianza. Ecuador ocupa uno de los últimos puestos en Latinoamérica en cuanto a este índice, donde tan solo el 10 % de las personas confían en los demás. (Keefer & Scartascini, 2022). 
+Uno de los indicadores claves que establece el Banco Interamericano de Desarrollo (BID) para explicar esta situación es la confianza. Ecuador ocupa uno de los últimos puestos en Latinoamérica en cuanto a este índice, donde tan solo el 10 % de las personas confían en los demás [@keefer_confianza_2022].
 
 Otra posible explicación para una reducción tan drástica sobre esta variable es que, en el año 2017, cuando terminó el mandato de Rafael Correa, se tuvo un importante aumento de acusaciones de corrupción (El Universo, 2017). Dichas acusaciones pueden haber causado que dos tercios de los ecuatorianos pierdan su confianza en el gobierno de Rafael Correa y no estén de acuerdo con la forma de actuar del mismo (El Comercio, 2016). La desconfianza es una forma de protección que tienen los ciudadanos en contra de las malas acciones del sistema político y sus representantes. Existen varias acciones las cuales pueden generar desconfianza  en los ciudadanos y una de las principales es la corrupción y falta de transparencia, lo cual se pudo evidenciar durante este periodo de tiempo (Macilla, 2015). 
 
 La única confianza que aumentó es hacia la policía. Esto se podría deber al incremento indiscriminado de la violencia y crímenes en el país, lo cual no deja a los ciudadanos otra alternativa más que confiar en las fuerzas del orden. Hay un aumento pequeño en la confianza en la policía, sin embargo, esto deja mucho que decir sobre la percepción de las personas sobre esta institución, dado que el 47% de los ecuatorianos no confían en la policía.  
 
-<<<<<<< HEAD
 # La relación entre la economía y la confianza 
-=======
-#La relación entre la economía y la confianza 
->>>>>>> ea82c88496162922ca9a0e35835849fdd6674f13
 
 El hecho de que exista un nivel de confianza bajo en el Ecuador se ve reflejado directamente en la economía. Un sector de la economía del Ecuador que refleja directamente las consecuencias de una falta de confianza es el mercado laboral. Al existir una falta de confianza, sobre todo en el gobierno, tanto los ciudadanos como las empresas podrían ser más reticentes a obedecer las leyes, como el pago de impuestos o seguir las regulaciones laborales. Esto genera directamente un aumento en la informalidad en la economía.
 
@@ -80,18 +58,10 @@ En el gráfico arriba, podemos ver un claro ejemplo de lo que podría significar
 
 Esto genera grandes repercusiones en otros sectores de la economía, como el mercado de crédito o bienes de consumo, donde en el primer trimestre de 2023 se registró una disminución del 2% del gasto de consumo final de los hogares (BCE, 2023). Debido a la situación de incertidumbre actual, los ciudadanos están impulsados a reducir sus gastos, causando que se reduzca el tamaño de la economía ecuatoriana. Esto solo es una prueba más del crecimiento del sector informal del empleo. La desconfianza podría causar que no se dinamice la economía, llevándola a una situación de estancamiento como la que se vive actualmente en Ecuador.
 
-<<<<<<< HEAD
 # Conclusión
-=======
-#Conclusión
->>>>>>> ea82c88496162922ca9a0e35835849fdd6674f13
 
 El porcentaje de personas que confían en las diferentes instituciones funciona como un indicador de cómo se desarrollará dicho país. La desconfianza por parte de algunos individuos siempre va a existir, sin embargo, el problema se genera cuando muchos ciudadanos del mismo país presentan desconfianza en las diferentes instituciones públicas. En el caso de Ecuador, podemos ver que más de la mitad de los ciudadanos no confían en su gobierno. Esta desconfianza se ve reflejada tanto a nivel social como económico. De esta manera, la desconfianza en el gobierno genera que exista menor inversión en el país y que las empresas, al no tener confianza en el gobierno, puedan en algunos casos negarse a pagar impuestos y respetar algunas leyes.
 
 El impacto de la desconfianza también se vive a nivel individual, donde 80% ecuatorianos hoy en día tienen miedo a perder su empleo o no encontrar trabajo y más de la mitad de la población empleada se encuentre en la zona de empleo informal. Otro impacto económico es la reducción del consumo por parte de los hogares, lo cual nos muestra una desaceleración de la economía ecuatoriana. Por último, podemos ver que los porcentajes de confianza varían entre regiones en el Ecuador y esto se debe a que la región Costa ha sido mucho más golpeada por la ola de violencia que está viviendo nuestro país.
 
-<<<<<<< HEAD
 # Referencias
-=======
-#Referencias
->>>>>>> ea82c88496162922ca9a0e35835849fdd6674f13
