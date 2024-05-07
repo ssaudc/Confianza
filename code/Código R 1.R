@@ -11,8 +11,8 @@ library(cowplot)
 library(patchwork)
 library(openxlsx)
 library(foreign)
-Wave_7_Ecuador <- read_dta("BASES LIDE/WVS_Wave_7_Ecuador_Stata_v5.0.dta")
-Wave_6_Ecuador<- read_dta("BASES LIDE/WV6_Data_Ecuador_Stata_v20201117.dta")
+Wave_7_Ecuador <- read_dta("data/wvs/WVS_Wave_7_Ecuador_Stata_v5.0.dta")
+Wave_6_Ecuador<- read_dta("data/wvs/WV6_Data_Ecuador_Stata_v20201117.dta")
 
 
 # Union de bases de datos
